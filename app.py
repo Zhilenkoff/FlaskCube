@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 
 app = Flask(__name__)
-
+#добавил комментарий
 @app.route('/')
 @app.route('/index/')
 def hello():
