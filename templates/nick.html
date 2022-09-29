@@ -2,11 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nickname</title>
+    {% if title %}
+    <title> {{ title }}</title>
+    {% else  %}
+    <title> Nickname </title>
+    {% endif %}
 </head>
 <body>
-<h1>
-  Ваш случайный nickname: {{name}}
-</h1>
+    {% if title %}
+    <h1>  {{ title }} </h1>
+    {% else %}
+    <h1> Ваш случайный nickname: {{name}} </h1>
+    {% endif %}
 </body>
 </html>
