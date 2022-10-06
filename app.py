@@ -8,22 +8,22 @@ menu = [{'name': 'Главная', 'url': '/'}, {'name': 'Помощь', 'url': 
 
 #добавил комментарий
 
-@app.route('/index/')
+@app.route('/index')
 @app.route('/')
 def hello():
     user = {'usernames': 'yURA'}
     return render_template('index.html',  user=user, title=choice(title), menu=menu)
-@app.route('/text/')
+@app.route('/text')
 def text():
-    return render_template('12.html', title = choice(title))
+    return render_template('12.html', title = choice(title), menu=menu)
 
 
 
-@app.route('/about/')
+@app.route('/about')
 def about():
     return render_template('about.html', title = choice(title), menu=menu)
 
-@app.route('/help/')
+@app.route('/help')
 def help():
     return render_template('help.html', title = choice(title), menu=menu)
 

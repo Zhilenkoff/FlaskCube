@@ -1,24 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    {% if title %}
-    <title> {{ title }}</title>
-    {% else %}
-    <title> Здравствуйте</title>
-    {% endif %}
-</head>
-<body>
-    {% if title %}
-    <h1>  {{ title }} </h1>
-    {% else %}
-    <h1>  Привет {{user.username}}  </h1>
-    {% endif %}
-    <ul>
-    {% for m in menu %}
-    <li>{{m.name}}</li>
-    {% endfor %}
-    </ul>
-</body>
+{% extends 'base.html' %}
+{% block content %}
+{{ super() }}
+<h1>  Привет {{user.username}}  </h1>
+{% endblock %}
 
-</html>
