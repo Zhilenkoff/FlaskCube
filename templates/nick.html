@@ -1,19 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    {% if title %}
-    <title> {{ title }}</title>
-    {% else  %}
-    <title> Nickname </title>
-    {% endif %}
-</head>
-<body>
+{% extends 'base.html' %}
+{% block content %}
+{{ super() }}
     {% if title %}
     <h1>  {{ title }}:{{name}}</h1>
-    {% else %}
-    <h1> Ваш случайный nickname: {{name}} </h1>
     {% endif %}
-
-</body>
-</html>
+<a href="{{url_for('exit')}}"> ВЫЙДИ от сюда РОЗБИЙНИК </a>
+{% endblock %}
