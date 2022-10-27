@@ -3,9 +3,14 @@ import datetime
 from flask import Flask, render_template, session, redirect, url_for, request, abort
 from random import choice
 
+from config import Config
+import os
+from pprint import pprint
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = 'dhme;kghjanrkael/jgbuilarelkjmgbipuehjmghiotrkjhtoikle'
+#app.config['SECRET_KEY'] = 'dhme;kghjanrkael/jgbuilarelkjmgbipuehjmghiotrkjhtoikle'
+app.config.from_object(Config)
+app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flask.db')))
 title = ['Flask', 'Как интересно', 'Ваши предложения', 'Химия', '']
 menu = [{'name': 'Главная', 'url': '/'}, {'name': 'Помощь', 'url': 'help'}, {'name': 'О приложении', 'url': 'about'},
         {'name': 'Таблица', 'url': 'table'}, {'name': 'Авторизация', 'url': 'login'}]
@@ -94,10 +99,11 @@ def delete_visits():
     session.pop('visits', None)  # удаление данных о посещениях
     return 'Visits deleted'
 
-@app.route("/exit")
-def exit():
-    del session["user_logged"]
-    return redirect(url_for("login"))
+@app.route('/delete_exit')
+def delete_exit():
+    if session.get('user_logged', False):
+        del session['user_logged']
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)
