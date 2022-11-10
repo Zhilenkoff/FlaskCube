@@ -1,20 +1,42 @@
 import datetime
+import sqlite3
 
-from flask import Flask, render_template, session, redirect, url_for, request, abort
+from flask import Flask, render_template, session, redirect, url_for, request, abort, g
 from random import choice
 
 from config import Config
 import os
 from pprint import pprint
+
+
 app = Flask(__name__)
 
-#app.config['SECRET_KEY'] = 'dhme;kghjanrkael/jgbuilarelkjmgbipuehjmghiotrkjhtoikle'
+# app.config['SECRET_KEY'] = 'dhme;kghjanrkael/jgbuilarelkjmgbipuehjmghiotrkjhtoikle'
 app.config.from_object(Config)
+# print(*app.config.items(), sep='\n')
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flask.db')))
+# print(*app.config.items(), sep='\n')
 title = ['Flask', 'Как интересно', 'Ваши предложения', 'Химия', '']
 menu = [{'name': 'Главная', 'url': '/'}, {'name': 'Помощь', 'url': 'help'}, {'name': 'О приложении', 'url': 'about'},
         {'name': 'Таблица', 'url': 'table'}, {'name': 'Авторизация', 'url': 'login'}]
 
+def connect_db():
+    conn = sqlite3.connect(app.config['DATABASE'])
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def get_db():
+    '''соединение с БД, если оно еще не установленно'''
+    if not hasattr(g, 'link_db'):
+        g.link_db = connect_db()
+    return g.link_db
+
+
+@app.teardown_appcontext
+def close_db(error):
+    ''' закрываем соединение с БД'''
+    if hasattr(g, 'link_db'):
+        g.link_db.close()
 
 @app.route('/index/')
 @app.route('/')
