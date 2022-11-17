@@ -8,6 +8,7 @@ from config import Config
 import os
 from pprint import pprint
 
+from flask_db_class import FlaskDataBase
 
 app = Flask(__name__)
 
@@ -18,7 +19,8 @@ app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flask.db')))
 # print(*app.config.items(), sep='\n')
 title = ['Flask', 'Как интересно', 'Ваши предложения', 'Химия', '']
 menu = [{'name': 'Главная', 'url': '/'}, {'name': 'Помощь', 'url': 'help'}, {'name': 'О приложении', 'url': 'about'},
-        {'name': 'Таблица', 'url': 'table'}, {'name': 'Авторизация', 'url': 'login'}]
+        {'name': 'Таблица', 'url': 'table'}, {'name': 'Авторизация', 'url': 'login'},
+        {'name': 'Главная БД', 'url': 'index_bd'}]
 
 def connect_db():
     conn = sqlite3.connect(app.config['DATABASE'])
@@ -37,6 +39,12 @@ def close_db(error):
     ''' закрываем соединение с БД'''
     if hasattr(g, 'link_db'):
         g.link_db.close()
+
+@app.route('/index_bd')
+def index_bd():
+    db = get_db()
+    db = FlaskDataBase(db)
+    return render_template('index_bd.html', menu=[])
 
 @app.route('/index/')
 @app.route('/')
