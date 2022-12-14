@@ -3,10 +3,12 @@ id integer primary key autoincrement,
 title text not null,
 url text not null
 );
-create table if not exists table1 (
+
+create table if not exists posts (
 id integer primary key autoincrement,
-User text not null,
-Post text not null,
-Time text not null
+title text not null,
+text text not null,
+url text not null,
+time integer not null
 );
 --DROP TABLE table1;

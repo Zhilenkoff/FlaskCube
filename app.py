@@ -1,12 +1,12 @@
+#C:\Users\r1212\AppData\Local\Yandex\YandexBrowser\User Data\Default\Network
 import datetime
 import sqlite3
 
-from flask import Flask, render_template, session, redirect, url_for, request, abort, g
+from flask import Flask, render_template, session, redirect, url_for, request, abort, g, flash
 from random import choice
 
 from config import Config
 import os
-from pprint import pprint
 
 from flask_db_class import FlaskDataBase
 
@@ -20,7 +20,7 @@ app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flask.db')))
 title = ['Flask', 'Как интересно', 'Ваши предложения', 'Химия', '']
 menu = [{'name': 'Главная', 'url': '/'}, {'name': 'Помощь', 'url': 'help'}, {'name': 'О приложении', 'url': 'about'},
         {'name': 'Таблица', 'url': 'table'}, {'name': 'Авторизация', 'url': 'login'},
-        {'name': 'Главная БД', 'url': 'index_bd'}]
+        {'name': 'Главная БД', 'url': '/db/index_db'}]
 
 def connect_db():
     conn = sqlite3.connect(app.config['DATABASE'])
@@ -40,11 +40,28 @@ def close_db(error):
     if hasattr(g, 'link_db'):
         g.link_db.close()
 
-@app.route('/index_bd')
-def index_bd():
+@app.route('/db/index_db')
+def index_db():
     db = get_db()
     db = FlaskDataBase(db)
-    return render_template('index_bd.html', menu=[])
+    k = db.getmenu()
+    print(k[0]['url'])
+    return render_template('index_db.html', menu=db.getmenu())
+@app.route('/db/add-post', methods=['POST', 'GET'])
+def add_post():
+    db = get_db()
+    db = FlaskDataBase(db)
+    if request.method == 'POST':
+        if len(request.form['name']) > 3 and 10 < len(request.form['post']) < 2 ** 20:
+            res = db.addPost(request.form['name'], request.form['post'])
+            if not res:
+                flash('Ошибка добавления статьи', category='error')
+            else:
+                flash('Статья добавлена', category='success')
+        else:
+            flash('Ошибка добавления статьи', category='error')
+
+    return render_template('addpost.html', menu=db.getmenu())
 
 @app.route('/index/')
 @app.route('/')
@@ -84,7 +101,7 @@ def profile(user):
 
 @app.route('/table')
 def t1():
-    return render_template('table.html')
+    return render_template('table.html', menu=menu)
 
 
 @app.errorhandler(404)
@@ -96,7 +113,7 @@ def profile_error(error):
     return f"<h1> Сперва авторизуйтесь </h1> {error}"
 
 
-app.permanent_session_lifetime = datetime.timedelta(seconds=1000)
+app.permanent_session_lifetime = datetime.timedelta(seconds=160)
 
 
 @app.route('/login', methods=["POST", "GET"])
@@ -111,7 +128,7 @@ def login():
         'password'] in users[request.form['username']]:  # and request.method == 'GET':
         session['user_logged'] = request.form['username']
         return redirect(url_for('profile', user=session['user_logged']))
-    return render_template('login.html', title="Авторизация", menu=menu)
+    return render_template('login.html', title="Авторизация")
 
 
 @app.route('/visits-counter')
