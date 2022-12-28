@@ -39,7 +39,7 @@ class FlaskDataBase:
 
     def addPost(self, title, text, url):
         try:
-            self.__cur.execute("SELECT.COUNT() as 'count' FROM posts WHERE url LIKE ?", (url,))
+            self.__cur.execute("SELECT COUNT() as 'count' FROM posts WHERE url LIKE ?", (url,))
             res = self.__cur.fetchone( )
             if res['count'] > 0:
                 print('Статья с такми url уже существует')
@@ -52,3 +52,25 @@ class FlaskDataBase:
             print('Ошибка добавления статьи в БД', str(e))
             return False
         return True
+
+    def getPosts(self):
+        try:
+            sql = ''' SELECT id, title, text, url FROM posts ORDER BY time DESC'''
+            self.__cur.execute(sql)
+            res = self.__cur.fetchall()
+            if res: return res
+        except sqlite3.Error as e:
+            print('Ошибка получения статьи из БД', str(e))
+
+        return []
+
+    def getPost(self, alias):
+        try:
+            sql = ''' SELECT title, text FROM posts WHERE url LIKE ? LIMIT 1'''
+            self.__cur.execute(sql, (alias,))
+            res = self.__cur.fetchone()
+            if res: return res
+        except sqlite3.Error as e:
+            print('Ошибка получения статьи из  БД', str(e))
+
+        return (False, False)

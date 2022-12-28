@@ -1,5 +1,14 @@
 {% extends 'base_admin.html' %}
 {% block content %}
 {{ super() }}
-<h1>Тут будет база данных </h1>
+<hr>
+<h2>Список статей </h2>
+<ul class="list-posts">
+    {% for p in posts %}
+    <li>
+        <p class="title"> <a href="{{ url_for('showPost', alias=p.url) }}"> {{ p.title }} </a> </p>
+        <p class="annonce"> {{ p.text[:50] | striptags }} </p>
+    </li>
+    {% endfor %}
+</ul>
 {% endblock %}

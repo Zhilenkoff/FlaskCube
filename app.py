@@ -44,16 +44,24 @@ def close_db(error):
 def index_db():
     db = get_db()
     db = FlaskDataBase(db)
-    k = db.getmenu()
-    print(k[0]['url'])
-    return render_template('index_db.html', menu=db.getmenu())
+    return render_template('index_db.html', menu=db.getmenu(), posts=db.getPosts())
+
+@app.route('/db/<alias>')
+def showPost(alias):
+    db = get_db()
+    db = FlaskDataBase(db)
+    title, post = db.getPost(alias)
+    if not title:
+        abort(404)
+    return render_template('post.html', menu=db.getmenu(), title=title, post=post)
+
 @app.route('/db/add-post', methods=['POST', 'GET'])
 def add_post():
     db = get_db()
     db = FlaskDataBase(db)
     if request.method == 'POST':
         if len(request.form['name']) > 3 and 10 < len(request.form['post']) < 2 ** 20:
-            res = db.addPost(request.form['name'], request.form['post'])
+            res = db.addPost(request.form['name'], request.form['post'], request.form['url'])
             if not res:
                 flash('Ошибка добавления статьи', category='error')
             else:
@@ -128,7 +136,7 @@ def login():
         'password'] in users[request.form['username']]:  # and request.method == 'GET':
         session['user_logged'] = request.form['username']
         return redirect(url_for('profile', user=session['user_logged']))
-    return render_template('login.html', title="Авторизация")
+    return render_template('login.html', title="Авторизация", menu=menu)
 
 
 @app.route('/visits-counter')
