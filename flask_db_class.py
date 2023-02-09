@@ -69,7 +69,13 @@ class FlaskDataBase:
             sql = ''' SELECT title, text FROM posts WHERE url LIKE ? LIMIT 1'''
             self.__cur.execute(sql, (alias,))
             res = self.__cur.fetchone()
-            if res: return res
+            if res:
+                base = url_for('static', filename = 'images_html')
+                text = re.sub(r"(?P<tag><img\s+[^>]*src=)(?P<quote>[\"'])(?P<url>.+?)(?P=quote)>",
+                              "\\g<tag>" + base + "/\\g<url>>", res['text'])
+                print(text)
+
+                return (res['title'], text)
         except sqlite3.Error as e:
             print('Ошибка получения статьи из  БД', str(e))
 
