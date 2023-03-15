@@ -7,6 +7,7 @@ from random import choice
 
 from config import Config
 import os
+#import git
 
 from flask_db_class import FlaskDataBase
 
@@ -22,10 +23,21 @@ menu = [{'name': 'Главная', 'url': '/'}, {'name': 'Помощь', 'url': 
         {'name': 'Таблица', 'url': 'table'}, {'name': 'Авторизация', 'url': 'login'},
         {'name': 'Главная БД', 'url': '/db/index_db'}]
 
+#@app.route('/update_server', methods=['POST'])
+#def webhook():
+    #if request.method == 'POST':
+        #repo = git.Repo('/home/Michael12211/flaskCUB')
+        #origin = repo.remotes.origin
+        #origin.pull()
+        #return 'Updated PythonAnywhere successfully', 200
+    #else:
+        #return 'Wrong event type', 400
+
 def connect_db():
     conn = sqlite3.connect(app.config['DATABASE'])
     conn.row_factory = sqlite3.Row
     return conn
+
 
 def get_db():
     '''соединение с БД, если оно еще не установленно'''
@@ -40,11 +52,19 @@ def close_db(error):
     if hasattr(g, 'link_db'):
         g.link_db.close()
 
+@app.route("/test")
+def test():
+    content = render_template("index.html", session=session, menu=menu)
+    res = make_response(content)
+    res.headers["Content-Type"] = "multipad/from"
+
+
 @app.route('/db/index_db')
 def index_db():
     db = get_db()
     db = FlaskDataBase(db)
     return render_template('index_db.html', menu=db.getmenu(), posts=db.getPosts())
+
 
 @app.route('/db/<alias>')
 def showPost(alias):
@@ -54,6 +74,7 @@ def showPost(alias):
     if not title:
         abort(404)
     return render_template('post.html', menu=db.getmenu(), title=title, post=post)
+
 
 @app.route('/db/add-post', methods=['POST', 'GET'])
 def add_post():
@@ -70,6 +91,7 @@ def add_post():
             flash('Ошибка добавления статьи', category='error')
 
     return render_template('addpost.html', menu=db.getmenu())
+
 
 @app.route('/index/')
 @app.route('/')
@@ -98,8 +120,8 @@ def profile(user):
     if 'user_logged' not in session or session['user_logged'] != user:
         abort(401)
 
-    return render_template('nick.html', name=user, menu=menu)
 
+    return render_template('nick.html', name=user, menu=menu)
 
 
 # @app.route('/profile/<username>')
@@ -115,6 +137,7 @@ def t1():
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('page404.html', title='Страница не найдена', menu=menu)
+
 
 @app.errorhandler(401)
 def profile_error(error):

@@ -20,9 +20,8 @@ def create_db():
 if __name__ == '__main__':
      db = connect_db()
      dbase = FlaskDataBase(db)
-     print(dbase.addmenu('Главная БД', 'index_db'))
-     #print(dbase.addmenu('Добавить статью', 'add_post'))
-     print(dbase.addmenu('Главное меню', 'menu'))
-     ##print(dbase.dellmenu())
-     #print(create_db.__doc__)
-     #create_db()
+     a = dbase.getPost("tashkent_test")
+     text = a[1].replace("./", "/static/images_html/", a[1].count("./"))
+     dbase.dellPost(3)
+
+     dbase.addPost("tashkent", text, "tashkent")

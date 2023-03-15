@@ -1,0 +1,21 @@
+{% extends 'base_admin.html' %}
+{% block content %}
+{{ super() }}
+<div>
+<form action={{url_for('index_db')}} method="post">
+    <p><label> Номер статьи: </label> <input type="text" name="number" value="" required></p>
+    <p><input type="submit" value="Удалить"></p>
+</form> </div>
+<hr>
+<h2 style="max-width: 800px;" align="center">Список статей </h2>
+<ul class="list-posts">
+    {% for p in posts %}
+    <li>
+        <p align="right" > {{p.id}} </p>
+        <p class="title"> <a href="{{ url_for('showPost', alias=p.url) }}"> {{ p.title }} </a>  </p>
+        <p class="annonce"> {{ (p.text | striptags)[:500] }} </p>
+
+    </li>
+   {% endfor %}
+</ul>
+{% endblock %}
